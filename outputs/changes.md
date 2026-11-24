@@ -85,4 +85,5 @@
 - Added a Render Blueprint in `render.yaml` for a free Node web service with secret environment variables configured through the Render dashboard.
 - Configured the production Express app to serve the built Vite frontend alongside `/api` from one same-origin service.
 - Updated the server listener to bind on all interfaces and added a root `start:prod` script for hosted runtime startup.
+- Updated the Render build command to install dev dependencies explicitly, since TypeScript and type declarations are needed during the production build.
 - Documented the deploy flow and current free-tier constraints: Render cold starts, ephemeral local filesystem, Neon storage/compute allowances, and Groq API rate limits.

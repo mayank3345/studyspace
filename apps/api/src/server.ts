@@ -8,8 +8,8 @@ const { createApp } = await import('./app.js');
 const { pool } = await import('./config/database.js');
 
 const port = Number(process.env.PORT ?? 3001);
-const server = createApp().listen(port, '127.0.0.1', () => {
-  console.log(`API listening on http://127.0.0.1:${port}`);
+const server = createApp().listen(port, '0.0.0.0', () => {
+  console.log(`API listening on port ${port}`);
 });
 
 server.on('error', (error) => {

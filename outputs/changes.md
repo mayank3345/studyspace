@@ -79,3 +79,10 @@
 - Renamed the mixed provider module to `apps/api/src/services/ai.service.ts` and updated API health output to identify the chat and embedding providers separately.
 - Updated the workspace privacy notice and README to explain that document text goes to Google for embeddings and relevant excerpts go to Groq for generation.
 - The local `.env` needs a Groq API key from the Groq Console before chat/study generation will work. Keep the existing Gemini key for embeddings.
+
+## Free deployment preparation
+
+- Added a Render Blueprint in `render.yaml` for a free Node web service with secret environment variables configured through the Render dashboard.
+- Configured the production Express app to serve the built Vite frontend alongside `/api` from one same-origin service.
+- Updated the server listener to bind on all interfaces and added a root `start:prod` script for hosted runtime startup.
+- Documented the deploy flow and current free-tier constraints: Render cold starts, ephemeral local filesystem, Neon storage/compute allowances, and Groq API rate limits.

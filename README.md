@@ -27,6 +27,12 @@ npm run dev
 
 Open the Vite URL printed in the terminal (normally `http://localhost:5173`). The API runs on `http://localhost:3001`.
 
+## 3. Free portfolio deployment
+
+The repository includes [`render.yaml`](render.yaml) for a single free Render web service. It builds the React app and serves the frontend and API from the same origin, avoiding a separate frontend host and production CORS setup. Push the repository to GitHub, create a Render Blueprint from it, and set `DATABASE_URL`, `GEMINI_API_KEY`, and `GROQ_API_KEY` when Render prompts for the unsynced secrets. The Neon schema must already be applied to the database referenced by `DATABASE_URL`.
+
+Render's free web services sleep after 15 minutes without requests and can take about a minute to wake. Their filesystem is ephemeral; this app stores PDF bytes in Neon, so uploads survive service restarts, but they use the database's storage allowance. Neon Free currently includes 1 GB of database storage and 100 compute-hours per project each month. Groq's free API access is rate-limited by model. These free tiers are suitable for a portfolio demo, not an always-on production service; review the current [Render free instance limits](https://render.com/docs/free), [Neon Free plan limits](https://neon.com/docs/introduction/free-tier), and [Groq rate limits](https://console.groq.com/docs/rate-limits).
+
 ## API routes
 
 - `GET /api/health` — confirms the API is running.
@@ -50,7 +56,7 @@ apps/
   api/
     src/
       app.ts               Express middleware, health checks, and route mounting
-      server.ts            Environment loading, listener, and shutdown
+      server.ts            Environment loading, public listener, and shutdown
       config/              Neon pool and shared upload limits
       controllers/         HTTP handlers for auth, documents, chat, and study
       middleware/          Session auth and centralized errors
@@ -69,6 +75,7 @@ apps/
 db/
   migrations/              Existing database migrations
   schema.sql               Initial Neon schema
+render.yaml                Free Render Blueprint for the combined frontend/API service
 ```
 
 ## Frontend workflow

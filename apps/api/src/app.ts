@@ -1,5 +1,6 @@
 import cors from 'cors';
 import express from 'express';
+import { fileURLToPath } from 'node:url';
 import { pool } from './config/database.js';
 import { configuredChatModel, configuredChatProvider, configuredEmbeddingModel, configuredEmbeddingProvider } from './services/ai.service.js';
 import authRoutes from './routes/auth.routes.js';
@@ -38,6 +39,16 @@ export function createApp() {
   app.use('/api/auth', authRoutes);
   app.use('/api/documents', documentRoutes);
   app.use('/api/chat', chatRoutes);
+
+  if (process.env.NODE_ENV === 'production') {
+    const webDist = fileURLToPath(new URL('../../web/dist/', import.meta.url));
+    app.use(express.static(webDist));
+    app.get('/{*path}', (request, response, next) => {
+      if (request.path.startsWith('/api/')) return next();
+      response.sendFile(fileURLToPath(new URL('../../web/dist/index.html', import.meta.url)));
+    });
+  }
+
   app.use(errorMiddleware);
 
   return app;

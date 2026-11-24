@@ -22,6 +22,7 @@ export type StudyItem = {
   id: string;
   type: 'flashcard' | 'quiz';
   prompt: string;
-  answer: string;
+  answer: string | null;
+  options: string[];
   sourcePages: number[];
 };

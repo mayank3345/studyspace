@@ -47,6 +47,17 @@ export function createStudyItems(token: string, documentId: string, type: StudyI
   });
 }
 
+export function checkStudyAnswer(token: string, documentId: string, itemId: string, selectedOptionIndices: number[]) {
+  return request<{
+    isCorrect: boolean;
+    correctOptions: string[];
+    explanation: string;
+  }>(token, `/api/documents/${documentId}/study-items/${itemId}/check`, {
+    method: 'POST',
+    body: JSON.stringify({ selectedOptionIndices }),
+  });
+}
+
 export async function loadPdf(token: string, documentId: string): Promise<string> {
   const response = await fetch(`/api/documents/${documentId}/file`, {
     headers: { Authorization: `Bearer ${token}` },

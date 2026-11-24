@@ -75,6 +75,8 @@ CREATE TABLE IF NOT EXISTS study_items (
   item_type TEXT NOT NULL CHECK (item_type IN ('flashcard', 'quiz')),
   prompt TEXT NOT NULL,
   answer TEXT NOT NULL,
+  options JSONB NOT NULL DEFAULT '[]'::jsonb,
+  correct_option_indices INTEGER[] NOT NULL DEFAULT '{}',
   source_pages INTEGER[] NOT NULL DEFAULT '{}',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

@@ -95,3 +95,11 @@
 - Reduced the maximum chat response to 900 tokens.
 - Limited study generation context to 12 evenly sampled excerpts (650 characters each) across the document and capped its response at 2,400 tokens.
 - These bounds keep prompts within a safer budget for Groq's 8,000 TPM free-tier model while retaining page-level source citations and document-wide study coverage.
+
+## Interactive quiz answers
+
+- Updated quiz generation to create four options and one or more correct option indices, plus an explanation.
+- Added `options` and `correct_option_indices` storage to the initial schema and a `003_quiz_options.sql` migration for existing Neon databases.
+- Added an authenticated answer-check endpoint that compares submitted checkbox selections with the saved answer key and only returns the correct options after submission.
+- Added a dedicated `QuizQuestion` component with checkbox selection, a check-answer action, correct/incorrect feedback, and the correct answer/explanation after an incorrect selection.
+- Kept answer keys out of the normal quiz-item list response; existing older quiz items without options can still reveal their saved answer.

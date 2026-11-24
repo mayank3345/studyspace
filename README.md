@@ -16,7 +16,7 @@ Create an API key in the [Groq Console](https://console.groq.com/keys) and set `
 
 Create a Gemini API key in [Google AI Studio](https://aistudio.google.com/apikey) and set `GEMINI_API_KEY` in `.env`. Gemini is used only for document and question embeddings, using `gemini-embedding-2` at 1,536 dimensions to match the Neon `vector(1536)` column. Google's free-tier requests may be used to improve its products, so avoid sensitive PDFs. See [Gemini API pricing and data use](https://ai.google.dev/gemini-api/docs/pricing/) and [rate limits](https://ai.google.dev/gemini-api/docs/rate-limits).
 
-In the Neon SQL Editor, run [`db/schema.sql`](db/schema.sql). If you already ran the earlier starter schema, run [`db/migrations/002_rag_features.sql`](db/migrations/002_rag_features.sql) instead. It adds PDF byte storage, login sessions, and an HNSW vector index. The schema uses 1,536-dimensional vectors to match the configured Gemini embedding output. Gemini Embedding 2 supports this output size; keep `GEMINI_EMBEDDING_DIMENSIONS`, the embedding request, and the database vector column in sync.
+In the Neon SQL Editor, run [`db/schema.sql`](db/schema.sql). If you already ran the earlier starter schema, run [`db/migrations/002_rag_features.sql`](db/migrations/002_rag_features.sql) and [`db/migrations/003_quiz_options.sql`](db/migrations/003_quiz_options.sql). The migrations add PDF byte storage, login sessions, an HNSW vector index, and quiz options with a private answer key. The schema uses 1,536-dimensional vectors to match the configured Gemini embedding output. Gemini Embedding 2 supports this output size; keep `GEMINI_EMBEDDING_DIMENSIONS`, the embedding request, and the database vector column in sync.
 
 ## 2. Install and run
 
@@ -41,6 +41,7 @@ Render's free web services sleep after 15 minutes without requests and can take 
 - `GET /api/documents`, `POST /api/documents`, `DELETE /api/documents/:id`, `GET /api/documents/:id/file` — user-scoped PDF library and PDF retrieval.
 - `POST /api/chat` — retrieve relevant chunks using Gemini embeddings and stream a grounded Groq answer and citations over SSE.
 - `GET/POST /api/documents/:id/study-items` — load and generate flashcards or quiz questions.
+- `POST /api/documents/:id/study-items/:itemId/check` — check selected quiz options and return feedback after submission.
 
 ## Current MVP limits
 

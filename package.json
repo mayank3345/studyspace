@@ -1,0 +1,22 @@
+{
+  "name": "document-study-workspace",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c green,blue \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "npm --workspace @study/api run dev",
+    "dev:web": "wait-on -t 30000 tcp:127.0.0.1:3001 && npm --workspace @study/web run dev",
+    "build": "npm --workspace @study/api run build && npm --workspace @study/web run build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "wait-on": "^9.5.1"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "esbuild@0.25.12": true,
+    "fsevents@2.3.3": true
+  }
+}

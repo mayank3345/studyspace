@@ -87,3 +87,11 @@
 - Updated the server listener to bind on all interfaces and added a root `start:prod` script for hosted runtime startup.
 - Updated the Render build command to install dev dependencies explicitly, since TypeScript and type declarations are needed during the production build.
 - Documented the deploy flow and current free-tier constraints: Render cold starts, ephemeral local filesystem, Neon storage/compute allowances, and Groq API rate limits.
+
+## Groq free-tier context limits
+
+- Reduced chat retrieval from five to four chunks and limited each source excerpt to 1,500 characters.
+- Limited follow-up context to four prior messages with each message clipped to 350 characters.
+- Reduced the maximum chat response to 900 tokens.
+- Limited study generation context to 12 evenly sampled excerpts (650 characters each) across the document and capped its response at 2,400 tokens.
+- These bounds keep prompts within a safer budget for Groq's 8,000 TPM free-tier model while retaining page-level source citations and document-wide study coverage.

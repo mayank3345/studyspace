@@ -32,7 +32,7 @@ export async function answerQuestion(request: Request, response: Response) {
       FROM chunks
       WHERE owner_id = $2 AND document_id = $3 AND embedding IS NOT NULL
       ORDER BY embedding <=> $1::vector
-      LIMIT 5
+      LIMIT 4
     `, [`[${vector.join(',')}]`, ownerId, documentId]);
     if (matches.rowCount === 0) {
       response.status(409).json({ error: 'No searchable text was found for this document.' });
@@ -46,7 +46,7 @@ export async function answerQuestion(request: Request, response: Response) {
       title: question.trim().slice(0, 80),
     });
     const history = await db.query<{ role: 'user' | 'assistant'; content: string }>(
-      'SELECT role, content FROM messages WHERE conversation_id = $1 ORDER BY created_at DESC LIMIT 8',
+      'SELECT role, content FROM messages WHERE conversation_id = $1 ORDER BY created_at DESC LIMIT 4',
       [activeConversationId],
     );
     history.rows.reverse();
@@ -56,10 +56,16 @@ export async function answerQuestion(request: Request, response: Response) {
       id: match.id,
       number: index + 1,
       page: match.page_number,
-      excerpt: match.content.slice(0, 520),
+      excerpt: match.content.slice(0, 450),
     }));
-    const sourceText = matches.rows.map((match, index) => `[${index + 1}] Page ${match.page_number}: ${match.content}`).join('\n\n');
-    const recentConversation = history.rows.map((message) => `${message.role === 'user' ? 'Student' : 'Assistant'}: ${message.content}`).join('\n');
+    // Keep RAG context bounded for Groq's free-tier TPM limits while retaining
+    // several semantically relevant sources and enough recent history for follow-ups.
+    const sourceText = matches.rows
+      .map((match, index) => `[${index + 1}] Page ${match.page_number}: ${match.content.slice(0, 1500)}`)
+      .join('\n\n');
+    const recentConversation = history.rows
+      .map((message) => `${message.role === 'user' ? 'Student' : 'Assistant'}: ${message.content.slice(0, 350)}`)
+      .join('\n');
     const prompt = [
       'You are a careful study assistant. Answer the student\'s latest question using only the source passages below.',
       'Use conversation history only to understand follow-up references. Cite factual claims inline using the exact citation markers [1], [2], etc.',

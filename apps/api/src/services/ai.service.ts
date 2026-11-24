@@ -68,7 +68,7 @@ async function requestGroq(prompt: string, stream: boolean): Promise<Response> {
       model: groqChatModel,
       messages: [{ role: 'user', content: prompt }],
       temperature: stream ? 0.2 : 0.3,
-      max_tokens: stream ? 1200 : 4096,
+      max_tokens: stream ? 900 : 2400,
       ...(stream ? { stream: true } : { response_format: { type: 'json_object' } }),
     }),
   };

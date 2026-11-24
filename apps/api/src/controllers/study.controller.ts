@@ -43,10 +43,19 @@ export async function createStudyItems(request: Request, response: Response) {
       return;
     }
     const chunks = await db.query<{ page_number: number; content: string }>(
-      'SELECT page_number, content FROM chunks WHERE document_id = $1 AND owner_id = $2 ORDER BY page_number, chunk_index LIMIT 80',
+      'SELECT page_number, content FROM chunks WHERE document_id = $1 AND owner_id = $2 ORDER BY page_number, chunk_index LIMIT 120',
       [request.params.id, getUserId(request)],
     );
-    const sourceText = chunks.rows.map((item) => `[Page ${item.page_number}] ${item.content}`).join('\n\n').slice(0, 65000);
+    const sampleCount = Math.min(12, chunks.rows.length);
+    const sampledChunks = Array.from({ length: sampleCount }, (_, index) => {
+      const sourceIndex = sampleCount === 1
+        ? 0
+        : Math.round(index * (chunks.rows.length - 1) / (sampleCount - 1));
+      return chunks.rows[sourceIndex];
+    });
+    const sourceText = sampledChunks
+      .map((item) => `[Page ${item.page_number}] ${item.content.slice(0, 650)}`)
+      .join('\n\n');
     const itemDescription = type === 'flashcard'
       ? 'clear, atomic study flashcards'
       : 'multiple-choice quiz questions with the correct answer and a brief explanation';
